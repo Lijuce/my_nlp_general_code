@@ -1,3 +1,34 @@
+import json
+
+
+def load_ndjson_to_array(file):
+    # 读取json格式的数据：dict->array
+    data = []
+    try:
+        with open(file, 'r') as f:
+            for line in f:
+                data.append(json.loads(line.strip()))
+    except Exception as e:
+        raise e
+    return data
+
+def read_lines(path_to_file):
+    # 读取普通文本格式的数据：multi->array
+    data = []
+    try:
+        with open(path_to_file, 'r') as f:
+            for line in f:
+                tmp = [x for x in line.strip().split()]  # x类型视情况而定
+                data.append(tmp)
+    except Exception as e:
+        raise e
+
+    return data
+
+def strlist_to_list(strlist):
+    # 字符串格式的列表->列表格式的列表
+    list_after = json.loads(strlist)
+    return list_after
 
 def build_corpus(split, data_dir):
     """读取数据"""
