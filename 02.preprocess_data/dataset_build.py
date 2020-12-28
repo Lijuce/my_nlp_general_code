@@ -72,3 +72,10 @@ def build_vocab(word_lists, tag_lists):
     tag2id['<pad>'] = len(tag2id)
     return word2id, tag2id
 
+def Output_file(file_to_path, output_data):
+    # 字符串列表内容->文本文件
+    for out_line in output_data:
+        with open(file_to_path, 'a') as f:
+            f.writelines(out_line + '\n')
+    print("Successfully output the data to the path: {}".format(file_to_path))
+
