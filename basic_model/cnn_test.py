@@ -3,6 +3,8 @@ import torch.nn as nn
 import torchvision
 import torchvision.transforms as transforms
 
+device = torch.device('cuda:0' if torch.cuda.is_available() else "cpu")
+
 class ConvNet(nn.Module):
     def __init__(self, num_classes):
         super(ConvNet, self).__init__()
@@ -29,14 +31,29 @@ class ConvNet(nn.Module):
         out = out.reshape(out.size(0), -1)
         out = self.fc(out)
         return out
-    
-model = ConvNet(num_classes=10)
+
+model = ConvNet(num_classes=10).to(device)
 criterion = nn.CrossEntropyLoss()   #使用交叉熵作为损失函数
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)	# 优化器，用于在反向传播中进行参数更新
 
-input_data = torch.randn(10,1,28,28)
+input_data = torch.randn(10,1,28,28).to(device)
 
-outputs = model(input_data)
-loss = criterion(outputs, labels)
-
-
+# Train the model
+total_step = len(train_loader)
+for epoch in range(num_epochs):
+    for i, (images, labels) in enumerate(train_loader):
+        images = images.to(device)
+        labels = labels.to(device)
+        
+        # Forward pass
+        outputs = model(images)
+        loss = criterion(outputs, labels)
+        
+        # Backward and optimize
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        
+        if (i+1) % 100 == 0:
+            print ('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}' 
+                   .format(epoch+1, num_epochs, i+1, total_step, loss.item()))
